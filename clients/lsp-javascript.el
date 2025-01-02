@@ -810,10 +810,18 @@ to run the command in."
        (not-empty (not (string-empty-p output))))
     (f-parent output)))
 
+(defun lsp-clients-typescript-project-ts-server ()
+  (if-let*
+      ((server-path (concat (lsp-workspace-root) "/.yarn/sdks/typescript/bin/tsserver"))
+       (server-path-exists (f-exists? server-path))
+       )
+      server-path
+    (lsp-clients-typescript-require-resolve)))
+
 (defun lsp-clients-typescript-server-path ()
   "Return the TS server path based on settings."
   (if-let* ((use-project-ts lsp-clients-typescript-prefer-use-project-ts-server)
-            (server-path (lsp-clients-typescript-require-resolve))
+            (server-path (lsp-clients-typescript-project-ts-server))
             (server-path-exist (f-exists? server-path)))
       server-path
     (if (memq system-type '(cygwin windows-nt ms-dos))
